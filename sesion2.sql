@@ -35,7 +35,6 @@
    
    
    ---------------------------------11 a 16--------------------------------------
-   select * from marca;
    select marca from marca 
    where marca not in 
    (select marca from articulo a join tv on a.cod = tv.cod);
