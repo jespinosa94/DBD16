@@ -39,10 +39,19 @@
    where marca not in 
    (select marca from articulo a join tv on a.cod = tv.cod);
    
+   select a.cod, nombre, tipo, marca from articulo a join camara c on a.cod = c.cod
+   where a.marca in ('Nikon', 'LG', 'SIGMA');
    
+   select a.cod, nombre, resolucion, sensor from articulo a left join camara c on a.cod = c.cod;
    
+   select c.*, nombre, pvp from cesta c join articulo a on c.articulo = a.cod
+   where to_char(fecha, 'YYYY') = '2010';
    
+   select * from articulo a left join cesta c on a.cod = c.articulo and to_char(fecha, 'yyyy') = '2010';
    
+   select count(*) usuarios from usuario;
+   
+   ---------------------------------17 a 22--------------------------------------
    
    
    
