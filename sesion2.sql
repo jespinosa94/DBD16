@@ -53,6 +53,40 @@
    
    ---------------------------------17 a 22--------------------------------------
    
+   select count(distinct provincia), 'provincias con usuario' from usuario;
+   
+   select max(pantalla) from tv;
+   
+   select min(nacido) from usuario;
+   
+   select * from linped;
+   
+   select linea, articulo, (importe*cantidad) total from linped where numpedido = 1;
+   
+   select p.numpedido, fecha, nombre, apellidos from pedido p join usuario u on p.usuario = u.email
+   join linped l on p.numpedido = l.numpedido
+   where (cantidad * importe) = (select max(importe*cantidad) from linped);
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
    
    
