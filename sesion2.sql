@@ -101,7 +101,7 @@
    group by p.numpedido, usuario
    having sum(cantidad * importe) > 4000;
    
-    ---------------------------------29 a 34--------------------------------------
+    ---------------------------------29 a 33--------------------------------------
    
    select distinct cod, marca, pvp 
    from articulo a
@@ -109,6 +109,11 @@
    and pvp is not null
    and a.cod not in (select articulo from linped);
   
+   select cod 
+   from articulo 
+   where cod in (select articulo from cesta)
+   or cod in (select articulo from linped);
+   
    
    
    
