@@ -67,19 +67,48 @@
    join linped l on p.numpedido = l.numpedido
    where (cantidad * importe) = (select max(importe*cantidad) from linped);
    
+   ---------------------------------23 a 28--------------------------------------
    
+   select dni, nombre, apellidos, email, count(*) numpedidos 
+   from usuario u join pedido p 
+   on u.email = p.usuario
+   group by dni, nombre, apellidos, email
+   having count(*) > 1;
    
+   select p.numpedido, p.usuario, count(distinct articulo) articulos 
+   from pedido p join linped l on p.numpedido = l.numpedido
+   group by p.numpedido, usuario
+   having count(distinct articulo) > 4;
    
+   select codp, p.nombre, count(email) usuarios
+   from provincia p join usuario u on codp = u.provincia
+   group by codp, p.nombre
+   having count(*) > 50;
    
+   select count(*) from articulo a
+   where cod not in (select cod from memoria)
+   and cod not in (select cod from tv)
+   and cod not in (select cod from objetivo)
+   and cod not in (select cod from camara)
+   and cod not in (select cod from pack);
    
+   select cod, nombre, count(distinct numpedido) veces 
+   from articulo left join linped on cod = articulo
+   group by cod, nombre;
    
+   select p.numpedido, usuario, sum(cantidad*importe) total 
+   from pedido p join linped l on p.numpedido = l.numpedido
+   group by p.numpedido, usuario
+   having sum(cantidad * importe) > 4000;
    
+    ---------------------------------29 a 34--------------------------------------
    
-   
-   
-   
-   
-   
+   select distinct cod, marca, pvp 
+   from articulo a
+   where marca = 'Samsung'
+   and pvp is not null
+   and a.cod not in (select articulo from linped);
+  
    
    
    
