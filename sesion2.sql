@@ -114,10 +114,24 @@
    where cod in (select articulo from cesta)
    or cod in (select articulo from linped);
    
+   select email, nombre 
+   from usuario 
+   where email not in (select usuario from pedido)
+   union
+   select email, nombre
+   from usuario join pedido on email = usuario 
+   group by email, nombre
+   having count(*) = 1;
    
+   select email, nombre 
+   from usuario 
+   where email not in 
+   (select usuario 
+   from pedido p join linped l on p.numpedido = l.numpedido
+   join camara c on c.cod = l.articulo);
    
-   
-   
+   select sysdate 
+   from dual;
    
    
    
