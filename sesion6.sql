@@ -339,9 +339,32 @@ create or replace procedure verminsuperficie is
   cursor c1 is select numero, superficie, supMin 
   from habitacion join categoria on categoria=nombre;
 begin
-  for regc1 in loop
-    if(regc1.superficie < regc1.supMin then
-      escribir('Habitacion ' || regc1.numero || ' dimension incorrecta');
-      insert into malcategoria values(regc1.numero, regc1.supMin - regc1.superficie);
+  for regc1 in c1 loop
+    if(regc1.superficie is null or regc1.supMin is null) then
+      if regc1.superficie is null then
+        escribir('Habitacion ' || regc1.numero || ' superficie sin valor');
+      end if;
+      if regc1.supMin is null then
+        escribir('Habitación ' || regc1.numero || ' superficie sin valor');
+      end if;
     else
-      escribir('Habitacion ' || regc1.numero || ' OK');
+      if(regc1.superficie < regc1.supMin) then
+        escribir('Habitación ' || regc1.numero || ' dimension incorrecta');
+        insert into malcategoria values(regc1.numero, regc1.supMin - regc1.superficie);
+      else
+        escribir('Habitacion ' || regc1.numero || ' dimension correcta');
+      end if;
+    end if;
+  end loop;
+end;
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
