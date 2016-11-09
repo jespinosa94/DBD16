@@ -331,7 +331,6 @@ insert into CITA values('18/11/2012',2,'99999999S','21668899P','MAS02');
 
 
 -------------------------------------------------Ejercicio 2--------------------------------------------------------------------
--- Falta la segunda parte del ejercicio de mejora de funcionalidad--
 delete malcategoria;
 select * from malcategoria;
 
@@ -358,8 +357,78 @@ begin
   end loop;
 end;
       
-      
-      
+-------------------------------------------------Ejercicio 3--------------------------------------------------------------------
+create or replace procedure verActividad (p_fecha in date) is
+  declare
+    cursor c1 is select hora, codigo, actividad 
+    from horario join actividad on actividad=codigo 
+    where fecha=p_fecha 
+    order by hora;
+  begin
+    for regc1 in c1 loop
+      escribir(regc1.hora || ' horas ' || regc1.codigo || ' ' || regc1.descripcion);
+    end loop;
+  end;  
+  
+-------------------------------------------------Ejercicio 4--------------------------------------------------------------------
+create or replace procedure mostrarEquivalentes (p_actAdulto in sustadultos.activ1%type) is
+    v_nomActividad actividad.descripcion%type;
+    cursor cAdultos is select activ2, descripcion
+    from sustadultos join actividad on activ2=codigo
+    where p_actAdulto=activ1
+    order by descripcion;
+  begin
+    select descripcion into v_nomActividad 
+    from actividad
+    where p_actAdulto=codigo;
+    escribir('Las actividades sustitutas de la actividad ' || v_nomActividad || ' son: ');
+    for regAdultos in cAdultos loop
+      escribir(regAdultos.activ2 || ' ' || regAdultos.descripcion);
+    end loop;
+  end;
+--Prueba
+select * from actadultos;
+exec mostrarEquivalentes('PET');
+
+-------------------------------------------------Ejercicio 5--------------------------------------------------------------------
+create table adaptadas(habitacion number(3) 
+constraint pkAdaptadas primary key
+constraint fkAdaptadas_Habitacion references habitacion);
+
+-------------------------------------------------Ejercicio 6--------------------------------------------------------------------
+create or replace procedure CompletaAdaptadas is
+  contador number(3):=0;
+  cursor cAdaptadas is select numero from habitacion where piso=0 and superficie>25;
+  begin
+    for regcAdaptadas in cAdaptadas loop
+      insert into adaptadas values(regcAdaptadas.numero);
+      contador := contador + 1;
+    end loop;
+    escribir('Se han dado de alta ' || contador || ' habitaciones adaptadas');
+  end;  
+  exec CompletaAdaptadas;
+
+-------------------------------------------------Ejercicio 7--------------------------------------------------------------------
+create or replace procedure revisaPreciosTemporada (p_temporada in temporada.nombre%type) is
+  begin
+    update pvptemporada set pad=psa*1.1, pmp=psa*1.2, ppc=psa*1.3
+    where temporada=p_temporada and psa is not null;
+  end;  
+  
+-------------------------------------------------Ejercicio 8--------------------------------------------------------------------
+create or replace procedure listaActividades is
+ cursor cActs is
+ select codigo, descripcion
+ from actividad
+ where codigo not in (
+ select activ1 from sustninos union
+ select activ1 from sustadultos union
+ select activ1 from susttodos);
+ begin
+  for regAct in cAtcs loop
+    escribir('Actividad sin sustituta ' || regAct.codigo || ' ' || regAct.descripcion);
+  end loop;
+  end;
       
       
       
