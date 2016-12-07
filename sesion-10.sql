@@ -9,27 +9,30 @@ end;
 set serveroutput on format;
 -------------------------------------------------Ejercicio 1--------------------------------------------------------------------
 --
-create or replace procedure ej1(p_cod servicio.codigo%type)  is
+--Solucion con function
+create or replace function ej1(p_cod servicio.codigo%type) return number is
   precioServicio number(5,2);
 begin
   select precio into precioServicio
   from servicio
   where p_cod=codigo;
-  
+  return(precioServicio);
   escribir('El precio del servicio ' || p_cod || ' es: ' || precioServicio);
 
 exception
   when no_data_found then
     escribir('No se encuentra el servicio con código ' || p_cod);
+    return null;
 end;
   
 exec ej1('olaa'); --Excepción
 exec ej1('CE02');
 
+
 -------------------------------------------------Ejercicio 2--------------------------------------------------------------------
 --Falta controlar que se meta mal la categoria, no salta error por el avg()
 create or replace function ej2(p_cat categoria.nombre%type, p_regimen calendreservas.alimentacion%type) return number is
-precioMedio number(5, 2);
+precioMedio number(5, 2):= 0; --/****inicializar a 0*****/ 
 begin
   if upper(p_regimen)='SA' then
     select avg(psa) into precioMedio
