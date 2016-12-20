@@ -9,13 +9,19 @@ end;
 set serveroutput on format;
 -------------------------------------------------Ejercicio 1--------------------------------------------------------------------
 --
+<<<<<<< HEAD
 create or replace function ej1(p_cod servicio.codigo%type) return number is
   precioServicio number(5,2):=NULL;
+=======
+--Solucion con function
+create or replace function ej1(p_cod servicio.codigo%type) return number is
+  precioServicio number(5,2);
+>>>>>>> origin/master
 begin
   select precio into precioServicio
   from servicio
   where p_cod=codigo;
-  
+  return(precioServicio);
   escribir('El precio del servicio ' || p_cod || ' es: ' || precioServicio);
   return(precioServicio);
 
@@ -28,12 +34,18 @@ end;
 exec ej1('olaa'); --Excepción
 exec ej1('CE02');
 
+
 -------------------------------------------------Ejercicio 2--------------------------------------------------------------------
 --Falta controlar que se meta mal la categoria, no salta error por el avg()
+<<<<<<< HEAD
 create or replace function Pr10ej2(p_cat categoria.nombre%type, p_regimen calendreservas.alimentacion%type) return number is
 precioMedio number(5, 2):=0;
 total number(1);
 no_existe_categoria exception;
+=======
+create or replace function ej2(p_cat categoria.nombre%type, p_regimen calendreservas.alimentacion%type) return number is
+precioMedio number(5, 2):= 0; --/****inicializar a 0*****/ 
+>>>>>>> origin/master
 begin
   select count(*) into total from pvptemporada where upper(p_cat) = categoria;
   
