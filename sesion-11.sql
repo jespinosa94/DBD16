@@ -10,53 +10,106 @@ set serveroutput on format;
 
 -------------------------------------------------Ejercicio 1--------------------------------------------------------------------
 --
-create or replace trigger precios_cat
-after insert or update on pvptemporada
-for each row
+create or replace trigger pr11ej1 after update or insert on pvptemporada
+for each row 
 begin
-  if(:new.psa>:new.pad and :new.psa is not null and :new.pad is not null) then
-    raise_application_error(-20601, 'El valor pSA: ' || :new.psa || ' es mayor que el precio de pAD');
-  else if(:new.pad>:new.pmp and :new.pad is not null and :new.pmp is not null) then
-    raise_application_error(-20601, 'El valor pAD: ' || :new.pad || ' es mayor que el precio de pMP');
-  else if(:new.pmp>:new.ppc and :new.pmp is not null and :new.ppc is not null) then
-    raise_application_error(-20601, 'El valor pMP: ' || :new.pmp || ' es mayor que el precio de pPC');
-end;
-
-delete from pvptemporada where categoria='S' and temporada='BAJA';
-insert into pvptemporada values('S', 'BAJA', 200, 100, 50, 60);
-
+  if (:new.psA>:new.pAD or :new.pSA>:new.pMP or :new.pSA>:new.pPC) then
+    raise_application_error(-20601, 'El precio de SA no es inferior a alguno de los otros');
+  end if;
+  if (:new.pAD>:newpMP or :new.pAD>:new.pPC or :new.pSA>:new.pPC) then
+    raise_application_error(-2601, 'oli');
+  end if;
+  if (:new.pMP>:new.pPC) then
+    raise_application_error(-20601, 'oli');
+  end if;  
+end;  
+  
 -------------------------------------------------Ejercicio 2--------------------------------------------------------------------
---Las habitaciones tipo SUITE sólo están en la quinta planta.
-create or replace trigger s11e2
-after insert or update on habitacion
+create or replace trigger pr11ej2 
+after insert or update of categoria, piso on habitacion
 for each row
 begin
-  if(:new.categoria='S' and :new.piso!=5) then
-    raise_application_error(-20601, 'Las habitaciones de tipo Suite solo pueden estar en la quinta planta');
+  if (:new.categoria='S' and :new.piso!=5) then
+    raise_application_error(-20601, 'oli');
   end if;
-end;
-
-insert into habitacion values(10, 'S', 21, 5);
-insert into habitacion (numero, categoria) values(11, 'S');
-
+end;  
+  
+  
 -------------------------------------------------Ejercicio 3--------------------------------------------------------------------
---comprobar que funciona con varios insert
-create or replace trigger s11e3
-after insert or modify on calendreservas
+create or replace trigger pr11ej3
+after insert or update on calendreservas
 for each row
-declare aux habitacion.categoria%type;
+declare
+categoriaHab varchar(2):=null;
 begin
-  select categoria into aux from habitacion join calendreservas where habitacion=numero;
-  if(aux='I') then
-    if(:new.camasup='SI') then
-      raise_application_error(-20601, 'Las habitaciones individuales no pueden tener cama supletoria');
-    end if;
+  select categoria into categoriaHab from habitacion where :new.habitacion=numero;
+  if(categoriaHab='I' and :new.camasup='S') then 
+    raise_application_error(-20601, 'oli');
   end if;
 end;
 
-insert into calendreservas (habitacion, fecha, camasup) values(4, '23-11-2016', 'no'); 
+-------------------------------------------------Ejercicio 4--------------------------------------------------------------------
+create or replace trigger pr11ej4
+after insert or update
+on cita
+for each row
+declare
+  total number(1);
+  auxempleado empleado.nombre%type;
+auxtrata tratamiento.observaciones%type;
+begin
+  select count(*) into total from realizar
+  where :new.tratamiento=tratamiento and :new.empleado=empleado;
   
+  if(total=0) then
+    raise_application_error(-20601,'El empleado ' || :new.empleado || ' no ' || :new.tratamiento);
+  end if;
+end;  
+
+-------------------------------------------------Ejercicio 5--------------------------------------------------------------------
+create table auxlimpieza(niflimpieza char(9), mes char(7), total number(2));
+
+create or replace trigger pr11ej5_1
+before insert or update on calendario
+begin
+  delete from auxlimpieza;
+  insert into auxlimpieza
+    select emplimpieza, to_char(fecha, 'MM-yyyy'), count(*) from calendario
+    where emplimpieza is not null
+    group by emplimpieza, to_char(fecha, 'MM-yyyy');
+end;    
+
+create or replace trigger pr11ej5_2
+after insert or update on calendario
+for each row
+declare
+  cuantos number(2);
+  auxnombre empleado.nombre%type;
+begin
+  select total into cuantos
+  from auxlimpieza where niflimpieza=:new.emplimpieza and mes=to_char(:new.fecha, 'MM-yyyy');
   
-  
-  
-  
+  if cuantos>=5 then
+    select nombre into auxnombre from empleado where nif=:new.emplimpieza;
+    escribir(auxnombre || ' ya esta bastante cargadito ehh....');
+  end if;
+  exception
+    when no_data_found then null;
+end;    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
